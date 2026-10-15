@@ -1,0 +1,75 @@
+{
+  "nodes": [
+    {
+      "id": "n1",
+      "shape": "ellipse",
+      "label": "MCP",
+      "rect": [
+        162.6,
+        39.3,
+        282.5,
+        89.3
+      ]
+    },
+    {
+      "id": "n2",
+      "shape": "rect",
+      "label": "Tablet",
+      "rect": [
+        30.7,
+        39.4,
+        130.2,
+        90.2
+      ]
+    },
+    {
+      "id": "n3",
+      "shape": "diamond",
+      "label": "new ink?",
+      "rect": [
+        159.4,
+        153.5,
+        284.6,
+        225.7
+      ]
+    },
+    {
+      "id": "n4",
+      "shape": "rect",
+      "label": "Agent",
+      "rect": [
+        320.6,
+        164.5,
+        420.5,
+        215.6
+      ]
+    }
+  ],
+  "edges": [
+    {
+      "from": "n2",
+      "to": "n1",
+      "directed": true,
+      "label": null
+    },
+    {
+      "from": "n1",
+      "to": "n3",
+      "directed": true,
+      "label": null
+    },
+    {
+      "from": "n3",
+      "to": "n4",
+      "directed": true,
+      "label": null
+    },
+    {
+      "from": "n4",
+      "to": "n1",
+      "directed": true,
+      "label": null
+    }
+  ],
+  "free_text": []
+}

@@ -1,11 +1,13 @@
 """
-reMarkable MCP Server
+reMarkable Agent MCP
 
-An MCP server that provides access to reMarkable tablet data through the reMarkable Cloud API.
+Two-way reMarkable workflows for an MCP-connected agent.
 """
 
+from importlib.metadata import PackageNotFoundError, version
+
 # Capability checking utilities
-from remarkable_mcp.capabilities import (
+from remarkable_mcp.core.capabilities import (
     client_supports_elicitation,
     client_supports_experimental,
     client_supports_roots,
@@ -14,7 +16,10 @@ from remarkable_mcp.capabilities import (
     get_protocol_version,
 )
 
-__version__ = "0.1.0"
+try:
+    __version__ = version("remarkable-agent-mcp")
+except PackageNotFoundError:
+    __version__ = "0+unknown"
 
 
 def get_mcp():

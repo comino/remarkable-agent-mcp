@@ -183,9 +183,9 @@ Resources appear in Claude's context when you mention them or use the "Attach" f
 
 ### In VS Code
 
-MCP resources can be accessed through the Copilot chat interface. The screenshot below shows resources appearing with the `mcpr` prefix:
-
-![Resources in VS Code](assets/resources-screenshot.png)
+MCP resources can be accessed through the Copilot chat interface. Use the
+resource picker to select a document, then ask the agent to read it. Resource
+labels and discovery controls depend on the client version.
 
 ### Programmatically
 

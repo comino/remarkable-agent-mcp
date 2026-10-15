@@ -1,14 +1,15 @@
 [project]
-name = "remarkable-mcp"
-version = "0.1.0"
-description = "MCP server for accessing reMarkable tablet data"
+name = "remarkable-agent-mcp"
+version = "1.3.0"
+description = "Your reMarkable as an AI agent front end: pen marks in, structured results out (MCP server)"
 readme = "README.md"
 license = { text = "MIT" }
 requires-python = ">=3.10"
 authors = [
-    { name = "Sam Morrow" }
+    { name = "remarkable-agent-mcp contributors" },
+    { name = "Sam Morrow", email = "sammorrowdrums@users.noreply.github.com" },
 ]
-keywords = ["mcp", "remarkable", "tablet", "notes", "sync"]
+keywords = ["mcp", "remarkable", "tablet", "handwriting", "pen", "review", "agents", "e-ink"]
 classifiers = [
     "Development Status :: 3 - Alpha",
     "Intended Audience :: Developers",
@@ -29,6 +30,7 @@ dependencies = [
     "ebooklib>=0.20",
     "beautifulsoup4>=4.15.0",
     "markdown-it-py>=4.2.0",
+    "websockets>=13.0",
 ]
 
 [project.optional-dependencies]
@@ -41,9 +43,23 @@ dev = [
 ocr = [
     "google-cloud-vision>=3.16.0",
 ]
+web = [
+    "trafilatura>=2.0.0",
+]
+
+[project.urls]
+Homepage = "https://github.com/comino/remarkable-agent-mcp"
+Documentation = "https://github.com/comino/remarkable-agent-mcp/blob/main/docs/workflows.md"
+Issues = "https://github.com/comino/remarkable-agent-mcp/issues"
 
 [project.scripts]
+remarkable-agent-mcp = "remarkable_mcp.cli:main"
+remarkable-agent-mcp-autopilot = "remarkable_mcp.workflows.live.autopilot:main"
+# Compatibility commands for existing local configurations.
+marginalia = "remarkable_mcp.cli:main"
+marginalia-autopilot = "remarkable_mcp.workflows.live.autopilot:main"
 remarkable-mcp = "remarkable_mcp.cli:main"
+remarkable-autopilot = "remarkable_mcp.workflows.live.autopilot:main"
 
 [build-system]
 requires = ["hatchling>=1.32.4"]
@@ -52,16 +68,40 @@ build-backend = "hatchling.build"
 [tool.hatch.build.targets.wheel]
 packages = ["remarkable_mcp"]
 
+[tool.hatch.build.targets.wheel.force-include]
+"THIRD_PARTY_NOTICES.md" = "remarkable_mcp/THIRD_PARTY_NOTICES.md"
+"PRIVACY.md" = "remarkable_mcp/PRIVACY.md"
+
+[tool.hatch.build.targets.sdist]
+include = [
+    "/remarkable_mcp", "/tests", "/smoke", "/docs", "/contrib", "/scripts",
+    "/README.md", "/LICENSE", "/THIRD_PARTY_NOTICES.md", "/PRIVACY.md", "/SECURITY.md",
+    "/CONTRIBUTING.md", "/CHANGELOG.md", "/CLAUDE.md", "/SKILL.md",
+    "/pyproject.toml", "/uv.lock", "/server.json", "/remarkable-mcp-bridge.nix",
+    "/.gitleaks.toml",
+]
+exclude = ["**/__pycache__", "**/*.pyc", "/smoke/snapshots", "**/.env*", "**/*.log"]
+
 [tool.black]
 line-length = 100
 
 [tool.ruff]
 line-length = 100
+# tests/ import shared helpers from each other (test_workflows, test_sketch, ...)
+src = [".", "tests"]
 
 [tool.ruff.lint]
 select = ["E", "F", "W", "I"]
 
+[tool.ruff.lint.per-file-ignores]
+# Tests carry long literal fixtures (strokes, payloads); keep them readable on one line.
+"tests/*.py" = ["E501"]
+# The gallery generator embeds an SVG template; its lines are markup, not code.
+"docs/assets/make_gallery.py" = ["E501"]
+
 [tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
 asyncio_mode = "auto"
 asyncio_default_fixture_loop_scope = "function"
 

@@ -1,7 +1,16 @@
 # Future Work
 
-This file summarizes accepted problem areas. GitHub issues contain the current
-scope and acceptance criteria.
+The focus is the complete reMarkable interaction loop: handwritten requests,
+agent replies, questions, reviews and reading. Existing workflows remain part
+of the project. The upstream issues linked below are background references,
+not commitments by this fork.
+
+## Interaction continuity
+
+Link follow-up questions, inbox requests, replies and review versions with
+stable IDs and source/page references. Make pending replies and ambiguous
+marks visible before adding new integrations. Persistent indexing and vault
+synchronization below are future work, not current guarantees.
 
 ## Near-term work
 

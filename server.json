@@ -1,25 +1,25 @@
 {
   "$schema": "https://static.modelcontextprotocol.io/schemas/2025-10-17/server.schema.json",
-  "name": "io.github.SamMorrowDrums/remarkable",
-  "title": "reMarkable MCP Server",
-  "description": "Read, render, search, and manage reMarkable documents through MCP",
+  "name": "io.github.comino/remarkable-agent-mcp",
+  "title": "reMarkable Agent MCP",
+  "description": "Your reMarkable as an AI agent front end: pen review, forms, inbox, sketches and live ink as structured results",
   "repository": {
-    "url": "https://github.com/SamMorrowDrums/remarkable-mcp",
+    "url": "https://github.com/comino/remarkable-agent-mcp",
     "source": "github"
   },
-  "version": "0.1.0",
+  "version": "1.3.0",
   "packages": [
     {
       "registryType": "pypi",
-      "identifier": "remarkable-mcp",
-      "version": "0.1.0",
+      "identifier": "remarkable-agent-mcp",
+      "version": "1.3.0",
       "transport": {
         "type": "stdio"
       },
       "environmentVariables": [
         {
           "name": "REMARKABLE_TOKEN",
-          "description": "Optional cloud credential. Prefer `remarkable-mcp --register CODE`, which saves it to ~/.rmapi. USB, SSH, and local-directory modes do not require it.",
+          "description": "Optional cloud credential. Prefer `remarkable-agent-mcp --register CODE`, which saves it to ~/.rmapi. USB, SSH, and local-directory modes do not require it.",
           "isRequired": false,
           "format": "string",
           "isSecret": true

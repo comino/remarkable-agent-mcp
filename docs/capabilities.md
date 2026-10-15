@@ -19,7 +19,7 @@ capabilities attached to that request:
 ```python
 from mcp.server.mcpserver import Context
 
-from remarkable_mcp.capabilities import (
+from remarkable_mcp.core.capabilities import (
     client_supports_elicitation,
     get_client_capabilities,
     get_client_info,
@@ -99,5 +99,5 @@ transport resolution are protected by locks and shared safely by modern
 stateless requests and legacy sessions in the same process.
 
 Streamable HTTP continues to bind to loopback by default and enforces strict
-Host/Origin allowlists. See the README's reverse-proxy guidance before exposing
+Host/Origin allowlists. See the reverse-proxy guidance in core.md before exposing
 it remotely.

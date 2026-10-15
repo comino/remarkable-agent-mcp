@@ -14,7 +14,7 @@ from mcp.server import MCPServer
 from mcp.server.mcpserver import Context
 from mcp.server.transport_security import TransportSecuritySettings
 
-from remarkable_mcp.extract import get_ocr_backend
+from remarkable_mcp.documents.extract import get_ocr_backend
 
 logger = logging.getLogger(__name__)
 
@@ -228,7 +228,7 @@ Connected via reMarkable Cloud API. Some features require SSH mode:
 - Raw PDF/EPUB file downloads
 - `content_type="raw"` parameter
 
-For faster access and raw files, consider SSH mode: `uvx remarkable-mcp --ssh`
+For faster access and raw files, consider SSH mode: `remarkable-agent-mcp --ssh`
 """
         if write_mode:
             instructions += """
@@ -270,6 +270,24 @@ For better handwriting recognition, configure GOOGLE_VISION_API_KEY and use
 REMARKABLE_OCR_BACKEND=auto (the default) or google.
 """
 
+    from remarkable_mcp.workflows.ink.handwriting import backend as _hw_backend
+
+    hw = _hw_backend()
+    hw_line = (
+        f"Handwritten notes in workflow results are transcribed with '{hw}'."
+        if hw != "none"
+        else "No handwriting backend is configured: workflow results mark notes as "
+        "'not_transcribed'; call again with include_images=true (only_new=false, "
+        "mark_seen=false) and read the crops yourself."
+    )
+    instructions += f"""
+## Workflow tools
+
+remarkable_whats_new() lists everything that needs attention (reviews, code
+and LaTeX reviews, forms, inbox, reading highlights) with the next tool call
+for each. See the tablet_check_in prompt. {hw_line}
+The OCR notes below apply to the core read/image tools only.
+"""
     return instructions
 
 
@@ -280,7 +298,7 @@ async def lifespan(app: MCPServer) -> AsyncIterator[None]:
     import os
 
     # Import here to avoid circular imports
-    from remarkable_mcp.resources import (
+    from remarkable_mcp.core.resources import (
         _is_ssh_mode,
         load_all_documents_sync,
         start_background_loader,
@@ -320,17 +338,23 @@ async def lifespan(app: MCPServer) -> AsyncIterator[None]:
     finally:
         # Stop background loader on shutdown (if running)
         await stop_background_loader(task)
-        from remarkable_mcp.api import close_device_client
-        from remarkable_mcp.export_resources import cleanup_export_resources
+        from remarkable_mcp.core.export_resources import cleanup_export_resources
+        from remarkable_mcp.transports.api import close_device_client
 
         await close_device_client()
         cleanup_export_resources()
+        from remarkable_mcp.workflows.live import watcher as _live
+
+        _live.shutdown()
 
 
 try:
-    _SERVER_VERSION = version("remarkable-mcp")
+    _SERVER_VERSION = version("remarkable-agent-mcp")
 except PackageNotFoundError:
-    _SERVER_VERSION = ""
+    try:
+        _SERVER_VERSION = version("remarkable-mcp")  # installed under the original name
+    except PackageNotFoundError:
+        _SERVER_VERSION = ""
 
 # One MCPServer serves modern 2026-07-28 requests and legacy initialize/session
 # clients concurrently. reMarkable credentials and transport selection remain
@@ -343,7 +367,7 @@ mcp = RemarkableMCP(
 )
 
 # Import tools, resources, and prompts to register them
-from remarkable_mcp import (  # noqa: E402
+from remarkable_mcp.core import (  # noqa: E402
     prompts,  # noqa: F401
     resources,  # noqa: F401
     tools,  # noqa: F401
@@ -355,16 +379,20 @@ from remarkable_mcp import (  # noqa: E402
 # web interface only supports upload, so only that tool registers in USB mode
 # (see the per-tool gating in write_tools.register_write_tools). Local-directory
 # mode is strictly read-only and registers no write tools.
-from remarkable_mcp import write_tools as _write_tools  # noqa: E402
+from remarkable_mcp.core import write_tools as _write_tools  # noqa: E402
 
 if _write_tools.write_enabled():
     _write_tools.register_write_tools()
 
+# Workflow tools (review round-trips, ink analysis). Sending needs write mode.
+# The module registers its tools on import (see _register_on_import), which
+# keeps import order irrelevant for the tools <-> server cycle.
 # Register the interactive MCP App canvas (remarkable_canvas + ui:// resource).
 # There is no feature flag: app-capable clients (those advertising the MCP Apps
 # UI extension at initialize) open an interactive viewer, while other clients
 # ignore the UI metadata and receive the rendered page as an embedded image.
-from remarkable_mcp import app_canvas as _app_canvas  # noqa: E402
+from remarkable_mcp.core import app_canvas as _app_canvas  # noqa: E402
+from remarkable_mcp.workflows import tools as _workflow_tools  # noqa: E402, F401
 
 _app_canvas.register_app_tools()
 

@@ -53,42 +53,42 @@ def _warn_for_http_binding(host: str) -> None:
 def main():
     """Main entry point - handle CLI args or run MCP server."""
     parser = argparse.ArgumentParser(
-        description="reMarkable MCP Server",
+        description="reMarkable Agent MCP",
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
 Examples:
   # Register and get token (run once)
-  uvx remarkable-mcp --register abcd1234
+  remarkable-agent-mcp --register abcd1234
 
   # Run as MCP server (cloud API, write-enabled by default)
-  uvx remarkable-mcp
+  remarkable-agent-mcp
 
   # Run as a read-only server (no upload/mkdir/move/rename/delete)
-  uvx remarkable-mcp --read-only
+  remarkable-agent-mcp --read-only
 
   # Run Streamable HTTP for a local OpenWebUI instance
-  uvx remarkable-mcp --http
+  remarkable-agent-mcp --http
 
   # Run with token from environment
-  REMARKABLE_TOKEN="your-token" uvx remarkable-mcp
+  REMARKABLE_TOKEN="your-token" remarkable-agent-mcp
 
   # Run with USB web interface
-  uvx remarkable-mcp --usb
+  remarkable-agent-mcp --usb
 
   # Run with SSH transport (direct USB connection, requires dev mode)
-  uvx remarkable-mcp --ssh
+  remarkable-agent-mcp --ssh
 
   # Read the reMarkable desktop app's local sync folder (offline, read-only)
-  uvx remarkable-mcp --local-dir
+  remarkable-agent-mcp --local-dir
 
   # Same, with an explicit xochitl-style directory
-  uvx remarkable-mcp --local-dir /path/to/remarkable/desktop
+  remarkable-agent-mcp --local-dir /path/to/remarkable/desktop
 
   # SSH with custom host (e.g., using SSH config)
-  REMARKABLE_SSH_HOST="remarkable" uvx remarkable-mcp --ssh
+  REMARKABLE_SSH_HOST="remarkable" remarkable-agent-mcp --ssh
 
   # SSH pinning an explicit key (ignores ssh-agent, e.g. 1Password)
-  uvx remarkable-mcp --ssh --ssh-key ~/.ssh/id_ed25519
+  remarkable-agent-mcp --ssh --ssh-key ~/.ssh/id_ed25519
 
 USB Web Interface Environment Variables:
   REMARKABLE_USB_HOST      USB web interface host (default: http://10.11.99.1)
@@ -110,7 +110,7 @@ SSH Environment Variables:
 
 Security Note:
   For better security, set up SSH key authentication instead of using
-  a password. See: https://github.com/SamMorrowDrums/remarkable-mcp/blob/main/docs/ssh-setup.md
+  a password. See: https://github.com/comino/remarkable-agent-mcp/blob/main/docs/ssh-setup.md
 
 Streamable HTTP Security:
   HTTP has no built-in authentication and binds to 127.0.0.1 by default. Keep
@@ -123,7 +123,7 @@ Streamable HTTP Security:
     parser.add_argument(
         "--register",
         metavar="CODE",
-        help="Register with reMarkable using a one-time code and print the token",
+        help="Register with reMarkable using a one-time code and save the credential locally",
     )
     parser.add_argument(
         "--ssh",
@@ -210,10 +210,10 @@ Streamable HTTP Security:
     if args.register:
         # Registration mode - convert one-time code to token
         # Only import what's needed for registration
-        from remarkable_mcp.api import register_and_get_token
+        from remarkable_mcp.transports.api import register_and_get_token
 
         try:
-            print(f"Registering with reMarkable using code: {args.register}")
+            print("Registering with reMarkable…")
             register_and_get_token(args.register)
             print("\nRegistration complete.")
             print("The credential was saved to ~/.rmapi.")
@@ -223,8 +223,8 @@ Streamable HTTP Security:
                     {
                         "servers": {
                             "remarkable": {
-                                "command": "uvx",
-                                "args": ["remarkable-mcp"],
+                                "command": "remarkable-agent-mcp",
+                                "args": [],
                             }
                         }
                     },

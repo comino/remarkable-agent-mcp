@@ -1,5 +1,8 @@
 # USB Web Interface Setup Guide
 
+First install this project using the [main quickstart](../README.md#quickstart).
+The examples below invoke the installed `remarkable-agent-mcp` command.
+
 The USB web interface provides read, render, and upload over USB. Its upload
 endpoint preserves the filename but has no destination-folder parameter; the
 tablet web service chooses the folder.
@@ -37,8 +40,8 @@ Add to your `.vscode/mcp.json`:
 {
   "servers": {
     "remarkable": {
-      "command": "uvx",
-      "args": ["remarkable-mcp", "--usb"],
+      "command": "remarkable-agent-mcp",
+      "args": ["--usb"],
       "env": {
         "GOOGLE_VISION_API_KEY": "your-api-key-if-needed"
       }
@@ -49,7 +52,7 @@ Add to your `.vscode/mcp.json`:
 
 Or run directly:
 ```bash
-uvx remarkable-mcp --usb
+remarkable-agent-mcp --usb
 ```
 
 ## Troubleshooting
@@ -201,4 +204,4 @@ If you encounter issues:
 1. Check this guide's [Troubleshooting](#troubleshooting) section
 2. Verify basic connectivity: `curl http://10.11.99.1/documents/`
 3. Check [reMarkable Guide](https://remarkable.guide/tech/usb-web-interface.html)
-4. Open an issue on [GitHub](https://github.com/SamMorrowDrums/remarkable-mcp/issues)
+4. Open an issue on [GitHub](https://github.com/comino/remarkable-agent-mcp/issues)

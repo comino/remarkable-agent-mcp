@@ -424,7 +424,7 @@ def _mode_prescreen(mode: str) -> tuple[bool, str]:
     """Cheap reachability check before spawning the server (avoids long hangs)."""
     spec = MODES[mode]
     if mode == "local":
-        from remarkable_mcp.local_dir import check_local_dir_available
+        from remarkable_mcp.transports.local_dir import check_local_dir_available
 
         base_dir = os.environ.get("REMARKABLE_LOCAL_DIR")
         if check_local_dir_available(base_dir):
@@ -999,7 +999,7 @@ async def run_mode(mode: str, rec: Recorder, read_only: bool):
         "REMARKABLE_SSH_TRACE": "1",
         **spec["env"],
     }
-    server_args = ["server.py", *spec["args"]]
+    server_args = ["-m", "remarkable_mcp", *spec["args"]]
     if read_only:
         server_args.append("--read-only")
     params = StdioServerParameters(

@@ -1,4 +1,4 @@
-# Copilot Instructions for remarkable-mcp
+# Copilot Instructions for reMarkable Agent MCP
 
 ## Project Overview
 
@@ -17,7 +17,7 @@ git push origin feature/my-feature
 # Then create PR via GitHub
 ```
 
-Branch protection is enabled on `main` - all changes must go through pull requests with passing CI checks.
+All changes must go through pull requests with passing CI checks.
 
 ## Package Management
 
@@ -68,13 +68,13 @@ uv run pytest -v -m "not slow"
 
 ```bash
 # Run the MCP server directly
-uv run python server.py
+uv run remarkable-agent-mcp
 
 # Register a new device (one-time setup)
-uv run python server.py --register <one-time-code>
+uv run remarkable-agent-mcp --register <one-time-code>
 
 # Run as installed package
-uv run remarkable-mcp
+uv run remarkable-agent-mcp
 ```
 
 ## Code Quality
@@ -106,24 +106,19 @@ uv run ruff format .
 ## Project Structure
 
 ```
-remarkable-mcp/
-├── server.py              # Entry point (backwards compatible)
+remarkable-agent-mcp/
 ├── remarkable_mcp/
-│   ├── server.py          # MCPServer and transports
-│   ├── tools.py           # Read and render tools
-│   ├── write_tools.py     # Write and authoring tools
-│   ├── api.py             # Transport selection
-│   ├── sync.py            # Cloud client
-│   ├── ssh.py             # SSH client
-│   ├── usb_web.py         # USB web client
-│   ├── local_dir.py       # Desktop cache client
-│   ├── extract.py         # Extraction and rendering
-│   └── app_canvas.py      # MCP Apps canvas
-├── test_server.py
-├── test_mcp_v2.py        # Modern/legacy protocol compatibility
-├── test_page_mapping.py
-├── test_local_dir.py
-├── test_integration.py
+│   ├── server.py           # assembles the MCP server; cli.py is the entry point
+│   ├── core/               # core tools: read/render, write/manage, canvas, resources, prompts
+│   ├── transports/         # cloud sync, SSH, USB web, local desktop cache (api.py selects)
+│   ├── documents/          # text/stroke extraction, .rm composition, exports, Markdown to PDF
+│   ├── workflows/          # ink interpretation: ink/, review/, forms/, inbox/, structure/,
+│   │                       #   reading/, live/ (incl. the autopilot), overview, state, safety
+├── tests/                 # pytest suite (conftest.py isolates all state)
+│   ├── test_server.py
+│   ├── test_mcp_v2.py     # Modern/legacy protocol compatibility
+│   ├── test_workflows.py  # Workflow layer; FakeCloud + synthetic ink helpers
+│   └── ...
 ├── docs/
 ├── smoke/
 ├── server.json
@@ -132,7 +127,8 @@ remarkable-mcp/
 └── .github/
     ├── copilot-instructions.md  # This file
     └── workflows/
-        └── publish.yml    # PyPI + MCP Registry publishing
+        ├── ci.yml         # lint, tests, artifacts and secret scans
+        └── conformance.yml # MCP interface checks
 ```
 
 ## Documentation Requirements
@@ -145,7 +141,7 @@ remarkable-mcp/
 4. **Installation** - Keep installation instructions accurate
 5. **Dependencies** - Note any new required system dependencies (e.g., Tesseract for OCR)
 
-When modifying `server.py`:
+When modifying `remarkable_mcp/server.py`:
 - If you add a tool, update the README tool table and examples.
 - If you change tool parameters, update examples and `docs/tools.md`.
 - If you add a dependency, update installation and development docs.
@@ -212,7 +208,7 @@ async def test_something():
 
 
 # Mocking the API client
-@patch("remarkable_mcp.tools.get_rmapi")
+@patch("remarkable_mcp.core.tools.get_rmapi")
 async def test_with_mock(mock_get_rmapi):
     mock_client = Mock()
     mock_get_rmapi.return_value = mock_client
@@ -223,8 +219,8 @@ async def test_with_mock(mock_get_rmapi):
 
 ### Adding a New Tool
 
-1. Add the tool function in `remarkable_mcp/tools.py` with proper docstring and annotations
-2. Add tests in `test_server.py`
+1. Add the tool function in `remarkable_mcp/core/tools.py` with proper docstring and annotations
+2. Add tests in `tests/test_server.py`
 3. Update README.md tools table
 4. Update README.md examples if relevant
 5. Run tests: `uv run pytest -v`
@@ -238,25 +234,5 @@ async def test_with_mock(mock_get_rmapi):
 
 ### Making a Release
 
-Releases are automated via GitHub Actions. The version is derived from the git tag.
-
-**Steps:**
-1. Ensure all changes are merged to `main`
-2. Ensure README.md is current
-3. Ensure CI is passing on `main`
-4. Create and push a version tag:
-   ```bash
-   # Get the current version from pyproject.toml or latest tag
-   git tag -l 'v*' | sort -V | tail -1
-   
-   # Create next version tag (e.g., v0.2.0)
-   git tag v0.2.0
-   git push origin v0.2.0
-   ```
-5. The workflow automatically:
-   - Creates a GitHub release with generated notes
-   - Builds the package with the tag version
-   - Publishes to PyPI
-   - Publishes to MCP Registry
-
-**Note:** The version in `pyproject.toml` is updated automatically during the build from the git tag. You don't need to manually update it.
+Follow [the release checklist](../docs/releasing.md). Versions are explicit in project
+metadata. There is no automatic PyPI or MCP Registry publication workflow.

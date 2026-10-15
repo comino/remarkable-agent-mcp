@@ -1,5 +1,8 @@
 # SSH Setup Guide
 
+First install this project using the [main quickstart](../README.md#quickstart).
+The examples below invoke the installed `remarkable-agent-mcp` command.
+
 SSH mode connects directly to your reMarkable tablet over USB, providing:
 
 - **10-100x faster** document access than Cloud API
@@ -49,8 +52,8 @@ Add to your VS Code MCP config (`.vscode/mcp.json`):
 {
   "servers": {
     "remarkable": {
-      "command": "uvx",
-      "args": ["remarkable-mcp", "--ssh"],
+      "command": "remarkable-agent-mcp",
+      "args": ["--ssh"],
       "env": {
         "GOOGLE_VISION_API_KEY": "your-api-key"
       }
@@ -69,8 +72,8 @@ If you haven't set up SSH keys, you can use password authentication **(not recom
 {
   "servers": {
     "remarkable": {
-      "command": "uvx",
-      "args": ["remarkable-mcp", "--ssh"],
+      "command": "remarkable-agent-mcp",
+      "args": ["--ssh"],
       "env": {
         "REMARKABLE_SSH_PASSWORD": "your-ssh-password",
         "GOOGLE_VISION_API_KEY": "your-api-key"
@@ -130,8 +133,8 @@ These integrate seamlessly — the agent handles authentication automatically, a
 > {
 >   "servers": {
 >     "remarkable": {
->       "command": "uvx",
->       "args": ["remarkable-mcp", "--ssh", "--ssh-key", "~/.ssh/id_ed25519"],
+>       "command": "remarkable-agent-mcp",
+>       "args": ["--ssh", "--ssh-key", "~/.ssh/id_ed25519"],
 >       "env": { "GOOGLE_VISION_API_KEY": "your-api-key" }
 >     }
 >   }
@@ -158,8 +161,8 @@ Then use the alias in your MCP config:
 {
   "servers": {
     "remarkable": {
-      "command": "uvx",
-      "args": ["remarkable-mcp", "--ssh"],
+      "command": "remarkable-agent-mcp",
+      "args": ["--ssh"],
       "env": {
         "REMARKABLE_SSH_HOST": "remarkable",
         "GOOGLE_VISION_API_KEY": "your-api-key"

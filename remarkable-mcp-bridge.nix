@@ -29,8 +29,8 @@ in
 
     command = lib.mkOption {
       type = lib.types.str;
-      default = "/opt/remarkable-mcp/.venv/bin/remarkable-mcp";
-      description = "Path to the installed remarkable-mcp executable.";
+      default = "/opt/remarkable-mcp/.venv/bin/remarkable-agent-mcp";
+      description = "Path to the installed remarkable-agent-mcp executable.";
     };
 
     host = lib.mkOption {

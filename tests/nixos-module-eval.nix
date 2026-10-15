@@ -17,6 +17,6 @@ assert service.environment.HOME == "/var/lib/remarkable-mcp";
 assert service.serviceConfig.NoNewPrivileges;
 assert service.serviceConfig.PrivateTmp;
 assert service.serviceConfig.ExecStart
-  == "/opt/remarkable-mcp/.venv/bin/remarkable-mcp --http --host 127.0.0.1 --port 8000";
+  == "/opt/remarkable-mcp/.venv/bin/remarkable-agent-mcp --http --host 127.0.0.1 --port 8000";
 assert builtins.isString unitText;
 true

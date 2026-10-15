@@ -1,5 +1,8 @@
 # Google Cloud Vision Setup
 
+First install this project using the [main quickstart](../README.md#quickstart).
+The examples below invoke the installed `remarkable-agent-mcp` command.
+
 Google Cloud Vision is an optional hosted OCR backend. It generally handles
 handwriting better than Tesseract, but sends page images to Google.
 
@@ -51,8 +54,8 @@ Add the key to your MCP configuration:
 {
   "servers": {
     "remarkable": {
-      "command": "uvx",
-      "args": ["remarkable-mcp", "--ssh"],
+      "command": "remarkable-agent-mcp",
+      "args": ["--ssh"],
       "env": {
         "GOOGLE_VISION_API_KEY": "your-api-key-here"
       }
@@ -100,8 +103,8 @@ Point to your credentials file:
 {
   "servers": {
     "remarkable": {
-      "command": "uvx",
-      "args": ["remarkable-mcp", "--ssh"],
+      "command": "remarkable-agent-mcp",
+      "args": ["--ssh"],
       "env": {
         "GOOGLE_APPLICATION_CREDENTIALS": "/path/to/your/credentials.json"
       }
@@ -117,7 +120,7 @@ Or install the SDK with default credentials:
 gcloud auth application-default login
 
 # Install remarkable-mcp with the optional SDK dependency
-uv tool install "remarkable-mcp[ocr]"
+uv tool install "remarkable-agent-mcp[ocr] @ git+https://github.com/comino/remarkable-agent-mcp"
 ```
 
 ## Environment Variables

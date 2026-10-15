@@ -1,15 +1,8 @@
-# Screenshots
+# Documentation assets
 
-This folder contains screenshots used in the documentation.
+Every gallery image is generated from synthetic ink and fictional examples by
+`make_gallery.py`, using the real rendering and recognition engines. No user
+notebook, reading library, account screen, or personal handwriting belongs here.
 
-## Required Images
-
-- `resources-screenshot.png`: MCP resources in VS Code
-- `tool-calls-screenshot.png`: tool calls in VS Code
-
-## How to Update
-
-1. Take screenshots from VS Code showing the MCP integration
-2. Resize to reasonable dimensions (800-1200px wide)
-3. Use PNG format for clarity
-4. Replace the files in this directory
+Regenerate with `uv run --with Hershey-Fonts python docs/assets/make_gallery.py`.
+Review both the generator and its PNG/SVG/JSON output before committing.
